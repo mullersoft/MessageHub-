@@ -29,34 +29,36 @@ const getMessageById = catchAsync(async (req: Request, res: Response, next: Next
 });
 
 // Update a message by ID
-const updateMessage = async (req: Request, res: Response) => {
-    try {
-        const message = await Message.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
-        if (!message) {
-            return res.status(404).json({ success: false, message: 'Message not found' });
-        }
-        res.status(200).json({ success: true, message });
-    } catch (error) {
-        res.status(500).json({ success: false, message: (error as Error).message });
+const updateMessage = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const message = await Message.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!message) {
+        return next(new AppError('Message not found', 404));
     }
-};
-
+    res.status(200).json({ success: true, message });
+});
 // Delete a message by ID
-const deleteMessage = async (req: Request, res: Response) => {
-    try {
-        const message = await Message.findByIdAndDelete(req.params.id);
-        if (!message) {
-            return res.status(404).json({ success: false, message: 'Message not found' });
-        }
-        res.status(200).json({ success: true, message: 'Message deleted' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: (error as Error).message });
+const deleteMessage = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const message = await Message.findByIdAndDelete(req.params.id);
+     if (!message) {
+      return next(new AppError("No document found with that ID", 404));
     }
-};
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+})
+// // Delete a message by ID
+// const deleteMessage = async (req: Request, res: Response) => {
+//     try {
+//         const message = await Message.findByIdAndDelete(req.params.id);
+//         if (!message) {
+//             return res.status(404).json({ success: false, message: 'Message not found' });
+//         }
+//         res.status(200).json({ success: true, message: 'Message deleted' });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: (error as Error).message });
+//     }
+// };
 
 export {
     createMessage,
