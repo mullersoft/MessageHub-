@@ -1,5 +1,4 @@
 import { Schema, model, Document } from 'mongoose';
-
 interface IMessage extends Document {
     text: string;
     category: string;
