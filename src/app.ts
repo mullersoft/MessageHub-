@@ -9,6 +9,8 @@ import globalErrorHandler from "./controllers/errorController";
 // import hpp from "hpp";
 // import eventRoute from "./routes/eventRoute";
 import messageRouter from "./routes/messageRoute";
+import categoryRouter from "./routes/categoryRoute";
+
 
 const app = express();
 
@@ -48,6 +50,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // 2) Routes
 app.use("/api/v1/messages", messageRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 
 // Handling unhandled routes
