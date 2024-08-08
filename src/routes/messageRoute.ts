@@ -1,4 +1,5 @@
 import express from 'express';
+import * as authController from "../controllers/authController";
 import {
     createMessage,
     getMessages,
@@ -15,7 +16,7 @@ router.post('/',
     // authMiddleware,
     createMessage);
 // Route to get all messages
-router.get('/', getMessages);
+router.get("/", authController.protect, getMessages);
 // Route to get a specific message by ID
 router.get('/:id', getMessageById);
 // Route to update a message by ID

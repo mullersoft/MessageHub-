@@ -1,28 +1,31 @@
 import express from 'express';
-import {
-    createCategory,
-    getCategories,
-    getCategoryById,
-    updateCategory,
-    deleteCategory
-} from '../controllers/categoryController';
+import * as authController from "../controllers/authController";
+import * as categoryController from "../controllers/categoryController";
 // import authMiddleware from '../middlewares/authMiddleware';
 
 const router = express.Router();
 // Route to create a new category
-router.post('/',
-    // authMiddleware,
-    createCategory);
+router.post(
+  "/",
+  // authMiddleware,
+  categoryController.createCategory
+);
 // Route to get all categories
-router.get('/', getCategories);
+router.get("/",
+    authController.protect,
+    categoryController.getCategories);
 // Route to get a specific category by ID
-router.get('/:id', getCategoryById);
+router.get("/:id", categoryController.getCategoryById);
 // Route to update a category by ID
-router.patch('/:id',
-    // authMiddleware,
-    updateCategory);
+router.patch(
+  "/:id",
+  // authMiddleware,
+  categoryController.updateCategory
+);
 // Route to delete a category by ID
-router.delete('/:id',
-    // authMiddleware,
-    deleteCategory);
+router.delete(
+  "/:id",
+  // authMiddleware,
+  categoryController.deleteCategory
+);
 export default router;

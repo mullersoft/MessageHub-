@@ -125,6 +125,4 @@ userSchema.methods.createPasswordResetToken = function (): string {
 };
 // Create a model using the schema
 const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
-//  return el === this.password;
-// conole.log(el)
 export default User;
