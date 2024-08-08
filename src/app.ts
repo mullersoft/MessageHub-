@@ -9,7 +9,9 @@ import globalErrorHandler from "./controllers/errorController";
 // import hpp from "hpp";
 // import eventRoute from "./routes/eventRoute";
 import messageRouter from "./routes/messageRoute";
-import categoryRouter from "./routes/categoryRoute";
+import categoryRouter from "./routes/categoryRoute"; ;
+import userRouter from "./routes/userRoute";
+
 
 
 const app = express();
@@ -51,8 +53,7 @@ app.use(express.urlencoded({ extended: false }));
 // 2) Routes
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/categories", categoryRouter);
-
-
+app.use("/api/v1/users", userRouter);
 // Handling unhandled routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

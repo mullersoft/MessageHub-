@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-
 // Handle uncaught exceptions
 process.on("uncaughtException", (err: Error) => {
   console.log("Uncaught exception --> Shutting down");
