@@ -4,7 +4,7 @@ import * as userController from "../controllers/userController";
 const router = express.Router();
 // Public Routes
 router.post("/signup", authController.signup);
-// router.post("/login", authController.login);
+router.post("/login", authController.login);
 // router.post("/forgotPassword", authController.forgotPassword);
 // router.patch("/resetPassword/:token", authController.resetPassword);
 // // Protect all routes after this middleware
