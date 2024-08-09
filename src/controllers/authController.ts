@@ -1,11 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import { promisify } from "util";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import catchAsync from "../utils/catchAsync";
 import User from "../models/userModel";
 import AppError from "../utils/appError";
 import Email from "../utils/email";
+import { IUser } from "../models/userModel"; // Adjust the import path as necessary
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: IUser; // Make sure this matches the type of your user model
+  }
+}
+
 const signToken = (id: string): string => {
   return jwt.sign({ id }, process.env.JWT_SECRETE as string, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -29,7 +35,7 @@ const createSendToken = (
     cookieOptions.secure = true;
   }
   res.cookie("jwt", token, cookieOptions);
- 
+
   // Remove password from output
   user.password = undefined;
   res.status(statusCode).json({
@@ -45,7 +51,7 @@ export const signup = catchAsync(
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
-      passwordChangedAt: req.body.passwordChangedAt,
+      role: req.body.role,
     });
     createSendToken(newUser, 201, res);
   }
@@ -110,11 +116,11 @@ export const protect = catchAsync(
 );
 export const restrictedTo = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    // if (!roles.includes(req.user.role)) {
-    //   return next(
-    //     new AppError("You do not have permission to perform this action!", 403)
-    //   );
-    // }
+    if (!req.user||!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action!", 403)
+      );
+    }
     next();
   };
 };
@@ -180,7 +186,6 @@ export const updatePassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     // 1) Get the user from collection
     // const user = await User.findById(req.user.id).select("+password");
-
     // 2) Check if posted current password is correct
     // if (
     //   !(await user.correctPassword(req.body.passwordCurrent, user.password))
@@ -191,7 +196,6 @@ export const updatePassword = catchAsync(
     // user.password = req.body.password;
     // user.passwordConfirm = req.body.passwordConfirm;
     // await user.save();
-
     // 4) Log user in and send JWT
     // createSendToken(user, 200, res);
   }

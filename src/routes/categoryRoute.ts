@@ -25,7 +25,8 @@ router.patch(
 // Route to delete a category by ID
 router.delete(
   "/:id",
-  // authMiddleware,
+  authController.protect,
+  authController.restrictedTo("participant"),
   categoryController.deleteCategory
 );
 export default router;
