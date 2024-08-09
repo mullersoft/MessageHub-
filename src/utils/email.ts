@@ -1,5 +1,5 @@
 import nodemailer, { Transporter } from "nodemailer";
-import { Options as MailOptions } from "nodemailer/lib/mailer";
+import { SendMailOptions as MailOptions } from "nodemailer";
 // import { convert } from "html-to-text";
 interface User {
   email: string;

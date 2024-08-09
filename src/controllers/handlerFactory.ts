@@ -2,13 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import APIFeatures from "../utils/apiFeatures";
+import { Model, Document } from "mongoose";
 
-/**
- * Factory function to delete a document by ID.
- * @param Model - Mongoose model.
- * @returns Express middleware function.
- */
-export const deleteOne = (Model: any) =>
+type ModelType<T extends Document> = Model<T>;
+
+export const deleteOne = <T extends Document>(Model: ModelType<T>) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
     if (!doc) {
@@ -20,12 +18,7 @@ export const deleteOne = (Model: any) =>
     });
   });
 
-/**
- * Factory function to update a document by ID.
- * @param Model - Mongoose model.
- * @returns Express middleware function.
- */
-export const updateOne = (Model: any) =>
+export const updateOne = <T extends Document>(Model: ModelType<T>) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -36,16 +29,11 @@ export const updateOne = (Model: any) =>
     }
     res.status(200).json({
       status: "success",
-      data: { data: doc },
+      data: { doc },
     });
   });
 
-/**
- * Factory function to create a new document.
- * @param Model - Mongoose model.
- * @returns Express middleware function.
- */
-export const createOne = (Model: any) =>
+export const createOne = <T extends Document>(Model: ModelType<T>) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.create(req.body);
     res.status(201).json({
@@ -54,13 +42,10 @@ export const createOne = (Model: any) =>
     });
   });
 
-/**
- * Factory function to get a single document by ID.
- * @param Model - Mongoose model.
- * @param popOptions - Optional populate options for the query.
- * @returns Express middleware function.
- */
-export const getOne = (Model: any, popOptions?: any) =>
+export const getOne = <T extends Document>(
+  Model: ModelType<T>,
+  popOptions?: any
+) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let query = Model.findById(req.params.id);
     if (popOptions) query = query.populate(popOptions);
@@ -70,16 +55,11 @@ export const getOne = (Model: any, popOptions?: any) =>
     }
     res.status(200).json({
       status: "success",
-      data: { data: doc },
+      data: { doc },
     });
   });
 
-/**
- * Factory function to get all documents with optional filtering, sorting, limiting fields, and pagination.
- * @param Model - Mongoose model.
- * @returns Express middleware function.
- */
-export const getAll = (Model: any) =>
+export const getAll = <T extends Document>(Model: ModelType<T>) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let filter = {};
     if (req.params.eventId) filter = { event: req.params.eventId };
@@ -95,6 +75,6 @@ export const getAll = (Model: any) =>
     res.status(200).json({
       status: "success",
       result: doc.length,
-      data: { data: doc },
+      data: { doc },
     });
   });

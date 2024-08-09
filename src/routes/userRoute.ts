@@ -12,14 +12,14 @@ router.use(authController.protect);
 // User profile routes
 router.patch("/updatePassword", authController.updatePassword);
 // router.get("/me", userController.getMe, userController.getUser);
-// router.patch(
-//   "/updateMe",
-//   userController.uploadUserPhoto,
-//   userController.resizeUserPhoto,
-//   userController.updateMe
-// );
+router.patch(
+  "/updateMe",
+  //   userController.uploadUserPhoto,
+  //   userController.resizeUserPhoto,
+  userController.updateMe
+);
 // router.delete("/deleteMe", userController.deleteMe);
-// router.get("/logout", authController.logOut);
+router.get("/logout", authController.logOut);
 // // Restrict following routes to admin only
 // router.use(authController.restrictedTo("admin"));
 // // Admin routes
