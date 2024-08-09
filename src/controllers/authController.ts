@@ -35,7 +35,6 @@ const createSendToken = (
     cookieOptions.secure = true;
   }
   res.cookie("jwt", token, cookieOptions);
-
   // Remove password from output
   user.password = undefined;
   res.status(statusCode).json({
@@ -53,6 +52,8 @@ export const signup = catchAsync(
       passwordConfirm: req.body.passwordConfirm,
       role: req.body.role,
     });
+    const url = `${req.protocol}://${req.get("host")}/me`; // Adjust the URL as necessary
+    await new Email(newUser, url).sendWelcome();
     createSendToken(newUser, 201, res);
   }
 );
@@ -184,20 +185,27 @@ export const resetPassword = catchAsync(
 );
 export const updatePassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    // 1) Get the user from collection
-    // const user = await User.findById(req.user.id).select("+password");
-    // 2) Check if posted current password is correct
-    // if (
-    //   !(await user.correctPassword(req.body.passwordCurrent, user.password))
-    // ) {
-    //   return next(new AppError("Your current password is wrong.", 401));
-    // }
-    // 3) Update password and save
-    // user.password = req.body.password;
-    // user.passwordConfirm = req.body.passwordConfirm;
-    // await user.save();
-    // 4) Log user in and send JWT
-    // createSendToken(user, 200, res);
+    // 1) Ensure req.user is defined
+    if (!req.user) {
+      return next(new AppError("You are not logged in!", 401));
+    }
+    // 2) Get the user from collection
+    const user = await User.findById(req.user.id).select("+password");
+    if (!user) {
+      return next(new AppError("User not found!", 404));
+    }
+    // 3) Check if posted current password is correct
+    if (
+      !(await user.correctPassword(req.body.passwordCurrent, user.password))
+    ) {
+      return next(new AppError("Your current password is wrong.", 401));
+    }
+    // 4) Update password and save
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+    // 5) Log user in and send JWT
+    createSendToken(user, 200, res);
   }
 );
 export const logOut = catchAsync(

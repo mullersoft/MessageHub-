@@ -52,8 +52,6 @@ const userSchema = new Schema<IUser>({
         return el === this.password;
       },
       message: "Passwords are not the same",
-// console.log(el)
-
     },
   },
   role: {
